@@ -13,7 +13,17 @@ class GPTNeoAssistant:
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         return response
 
+class GitHubAPIHandler:
+    def __init__(self):
+        pass  
+    
+    def handle_query(self, query): #checks the query for certain keywords and returns hardcoded responses.
+        if "authenticate" in query:
+            return "To authenticate your requests, use the 'Authorization' header with your personal access token."
+
 gpt_neo_assistant = GPTNeoAssistant()
+github_api_handler = GitHubAPIHandler()
+
 
 
 def api_call(endpoint, headers):
