@@ -26,9 +26,14 @@ class GitHubAPIHandler:
         response.raise_for_status()
         with open(filename, 'wb') as file:
             file.write(response.content)
+
+    def print_spec_summary(self):
+        print(f"Keys at the root level: {list(self.api_spec.keys())}")
+        print(f"Keys under 'paths': {list(self.api_spec['paths'].keys())[:5]}")  # Print first 5 keys under 'paths'
+        print(f"Details of one endpoint: {self.api_spec['paths']['/repos/{owner}/{repo}']}")
     
     def load_spec(self, filename):
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             self.api_spec = json.load(file)
     
     def handle_query(self, query):
@@ -39,16 +44,18 @@ def handle_query(query):
     if "GitHub API" in query:
         response = github_api_handler.handle_query(query)
     else:
-        response = gpt_neo_assistant.generate_response(query)
+        # response = gpt_neo_assistant.generate_response(query)
+        response = "GPT-Neo is temporarily disabled."
     print(response)
 
 api_spec_url = 'https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json'
 api_spec_filename = 'api_spec.json'
 
-gpt_neo_assistant = GPTNeoAssistant()
+#gpt_neo_assistant = GPTNeoAssistant()
 github_api_handler = GitHubAPIHandler(api_spec_url, api_spec_filename)
 
 if __name__ == "__main__":
     while True:
         query = input("Ask me a question: ")
+        github_api_handler.print_spec_summary()
         handle_query(query)
