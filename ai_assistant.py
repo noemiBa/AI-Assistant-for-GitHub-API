@@ -14,12 +14,12 @@ class GPTNeoAssistant:
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         return response
     
-    def generate_api_response(self, info):
+    def generate_api_response(self, query, info):
         if info:
-            response_text = f"Path: {info['path']}\nMethod: {info['method']}\nSummary: {info['summary']}\nDescription: {info['description']}"
-            return response_text
+            input_text = f"User Query: {query}\nAPI Info: {json.dumps(info, indent=2)}"
+            return self.generate_response(input_text)
         else:
-            return "I couldn't find relevant information for your query."
+            return self.generate_response(query)
 
 class GitHubAPIHandler:
     def __init__(self, spec_url, spec_filename):
@@ -44,10 +44,16 @@ class GitHubAPIHandler:
         return keywords
 
     def lookup_info(self, keywords):
-        for path, operations in github_api_handler.api_spec['paths'].items():
+        best_match = None
+        best_match_score = 0
+        for path, operations in self.api_spec['paths'].items():
             for method, operation in operations.items():
-                if any(keyword in operation['description'].lower() for keyword in keywords):
-                    return {
+                description_words = set(operation['description'].lower().split())
+                common_words = description_words.intersection(keywords)
+                match_score = len(common_words)
+                if match_score > best_match_score:
+                    best_match_score = match_score
+                    best_match = {
                         'path': path,
                         'method': method.upper(),
                         'summary': operation.get('summary', ''),
@@ -55,7 +61,8 @@ class GitHubAPIHandler:
                         'parameters': operation.get('parameters', []),
                         'responses': operation.get('responses', {})
                     }
-        return None
+        return best_match
+
     
     def load_spec(self, filename):
         with open(filename, 'r', encoding='utf-8') as file:
