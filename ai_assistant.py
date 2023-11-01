@@ -2,6 +2,7 @@ import os
 import requests
 import json
 from transformers import GPTNeoForCausalLM, GPT2Tokenizer
+from fuzzywuzzy import process
 
 class GPTNeoAssistant:
     def __init__(self):
@@ -19,15 +20,22 @@ class GPTNeoAssistant:
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         return response
     
-        def generate_api_response(self, query, info):
-            pre_generated_response = self.pre_generated_responses.get(query)
-            if pre_generated_response:
-                return pre_generated_response
-            if info:
-                input_text = f"User Query: {query}\nPath: {info['path']}\nMethod: {info['method']}\nSummary: {info['summary']}\nDescription: {info['description']}"
-                return self.generate_response(input_text)
-            else:
-                return self.generate_response(query)
+    def get_closest_pre_generated_response(self, query):
+        closest_match, score = process.extractOne(query, self.pre_generated_responses.keys())
+        
+        if score >= 80:
+            return self.pre_generated_responses[closest_match]
+        return None
+    
+    def generate_api_response(self, query, info):
+        pre_generated_response = self.get_closest_pre_generated_response(query)
+        if pre_generated_response:
+            return pre_generated_response
+        if info:
+            input_text = f"User Query: {query}\nPath: {info['path']}\nMethod: {info['method']}\nSummary: {info['summary']}\nDescription: {info['description']}"
+            return self.generate_response(input_text)
+        else:
+            return self.generate_response(query)
 
 class GitHubAPIHandler:
     def __init__(self, spec_url, spec_filename):

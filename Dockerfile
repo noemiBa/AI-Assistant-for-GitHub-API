@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install --no-cache-dir transformers requests torch
+RUN pip install --no-cache-dir transformers requests torch fuzzywuzzy python-Levenshtein
 
 EXPOSE 80
 
