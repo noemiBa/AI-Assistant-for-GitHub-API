@@ -69,10 +69,10 @@ class GitHubAPIHandler:
             self.api_spec = json.load(file)
 
 def handle_query(query):
-        keywords = github_api_handler.preprocess_query(query)  
-        info = github_api_handler.lookup_info(keywords) 
-        response = gpt_neo_assistant.generate_api_response(info)  
-        print(response)
+    keywords = github_api_handler.preprocess_query(query)  
+    info = github_api_handler.lookup_info(keywords) 
+    response = gpt_neo_assistant.generate_api_response(query, info)  
+    print(response)
 
 api_spec_url = 'https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json'
 api_spec_filename = 'api_spec.json'

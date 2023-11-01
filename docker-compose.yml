@@ -1,0 +1,10 @@
+version: '3'
+services:
+  gpt-neo-assistant:
+    image: gpt-neo-assistant
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    command: python ai_assistant.py
