@@ -1,0 +1,6 @@
+{
+    "What are the core resources exposed by the API?": "The core resources exposed by the GitHub AE API include repositories, issues, pull requests, actions, packages, and users.",
+    "How do I authenticate my requests?": "To authenticate your requests, you'll need to create a personal access token on GitHub and include it in the headers of your API requests.",
+    "How can I create a new repository via the API?": "To create a new repository via the API, you can use the `POST /user/repos` endpoint. Here's a sample request in Python using the `requests` library:\n\n```python\nimport requests\n\nurl = 'https://api.github.com/user/repos'\nheaders = {'Authorization': 'token YOUR_TOKEN'}\ndata = {'name': 'new-repo'}\n\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())\n```",
+    "What parameters does the search API accept?": "The search API accepts parameters such as `q` for the search query, `sort` to specify the sort field, and `order` to specify the sort order."
+}

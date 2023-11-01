@@ -7,19 +7,27 @@ class GPTNeoAssistant:
     def __init__(self):
         self.tokenizer = GPT2Tokenizer.from_pretrained("EleutherAI/gpt-neo-125M")  
         self.model = GPTNeoForCausalLM.from_pretrained("EleutherAI/gpt-neo-125M")  
+        self.pre_generated_responses = self.load_pre_generated_responses()
 
+    def load_pre_generated_responses(self):
+        with open('pre_generated_responses.json', 'r') as file:
+            return json.load(file)
+        
     def generate_response(self, query):
         inputs = self.tokenizer.encode(query, return_tensors="pt", truncation=True)
         outputs = self.model.generate(inputs, max_length=350, temperature=0.7, pad_token_id=self.tokenizer.eos_token_id)
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         return response
     
-    def generate_api_response(self, query, info):
-        if info:
-            input_text = f"User Query: {query}\nPath: {info['path']}\nMethod: {info['method']}\nSummary: {info['summary']}\nDescription: {info['description']}"
-            return self.generate_response(input_text)
-        else:
-            return self.generate_response(query)
+        def generate_api_response(self, query, info):
+            pre_generated_response = self.pre_generated_responses.get(query)
+            if pre_generated_response:
+                return pre_generated_response
+            if info:
+                input_text = f"User Query: {query}\nPath: {info['path']}\nMethod: {info['method']}\nSummary: {info['summary']}\nDescription: {info['description']}"
+                return self.generate_response(input_text)
+            else:
+                return self.generate_response(query)
 
 class GitHubAPIHandler:
     def __init__(self, spec_url, spec_filename):
