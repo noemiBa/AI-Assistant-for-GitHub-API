@@ -50,11 +50,6 @@ class GitHubAPIHandler:
         with open(filename, 'wb') as file:
             file.write(response.content)
 
-    # def print_spec_summary(self):
-    #     print(f"Keys at the root level: {list(self.api_spec.keys())}")
-    #     print(f"Keys under 'paths': {list(self.api_spec['paths'].keys())[:5]}")  
-    #     print(f"Details of one endpoint: {self.api_spec['paths']['/repos/{owner}/{repo}']}")
-    
     def preprocess_query(self, query):  
         keywords = query.lower().split()
         return keywords
