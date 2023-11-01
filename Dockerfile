@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install --no-cache-dir transformers requests
+RUN pip install --no-cache-dir transformers requests torch
 
 EXPOSE 80
 
